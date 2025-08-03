@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "tailwind:build": "tailwindcss build -i ./src/index.css -o ./src/tailwind.css",
-    "tailwind:watch": "tailwindcss -i ./src/index.css -o ./src/tailwind.css --watch",
-    "prepare": "husky install"
-  },
+  "prepare": "echo skipping husky for CI",
+  "dev": "vite",
+  "build": "vite build",
+  "lint": "eslint .",
+  "preview": "vite preview",
+  "tailwind:build": "tailwindcss build -i ./src/index.css -o ./src/tailwind.css",
+  "tailwind:watch": "tailwindcss -i ./src/index.css -o ./src/tailwind.css --watch"
+},
   "dependencies": {
     "axios": "^1.11.0",
     "prop-types": "^15.8.1",

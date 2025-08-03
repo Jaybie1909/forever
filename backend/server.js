@@ -9,7 +9,12 @@ import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://forever-jjbb.vercel.app", // ✅ your frontend
+  "https://forever-jjbb1.vercel.app", // ✅ your admin
+];
 
 const corsOptions = {
   origin: function (origin, callback) {

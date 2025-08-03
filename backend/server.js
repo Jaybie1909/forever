@@ -12,13 +12,19 @@ import orderRouter from "./routes/orderRoute.js";
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://forever-jjbb.vercel.app", // ✅ your frontend
-  "https://forever-jjbb1.vercel.app", // ✅ your admin
+  "https://forever-jjbb.vercel.app",   // ← Your frontend
+  "https://forever-jjbb1.vercel.app",  // ← Your admin
 ];
 
+
 origin: function (origin, callback) {
-  console.log("CORS origin request:", origin); // 👈 helps debug
-  ...
+  console.log("CORS origin request:", origin); // 🔍 see this in Render logs
+  if (!origin || allowedOrigins.includes(origin)) {
+    callback(null, true);
+  } else {
+    console.log("Blocked by CORS:", origin);
+    callback(new Error("Not allowed by CORS"));
+  }
 }
 
 

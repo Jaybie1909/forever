@@ -16,6 +16,12 @@ const allowedOrigins = [
   "https://forever-jjbb1.vercel.app", // ✅ your admin
 ];
 
+origin: function (origin, callback) {
+  console.log("CORS origin request:", origin); // 👈 helps debug
+  ...
+}
+
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {

@@ -12,9 +12,10 @@ import orderRouter from "./routes/orderRoute.js";
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://forever-jjbb.vercel.app",   // ← Your frontend
-  "https://forever-jjbb1.vercel.app",  // ← Your admin
+  "https://forever-jjbb.vercel.app",   // ✅ Make sure this is exactly as shown
+  "https://forever-jjbb1.vercel.app",  // ✅ Admin
 ];
+
 
 
 origin: function (origin, callback) {
@@ -27,6 +28,7 @@ origin: function (origin, callback) {
   }
 }
 
+console.log("🔍 Incoming CORS request from:", origin);
 
 const corsOptions = {
   origin: function (origin, callback) {

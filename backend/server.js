@@ -10,41 +10,57 @@ import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://forever-jjbb.vercel.app", // ✅ Frontend
-  "https://forever-jjbb1.vercel.app", // ✅ Admin
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    console.log("🔍 Incoming CORS request from:", origin);
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("❌ Blocked by CORS:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-
+// Initialize express first
 const app = express();
 const port = process.env.PORT || 4000;
 
-connectCloudinary();
+// Configure CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://forever-jjbb.vercel.app", // ✅ Main
+  "https://forever-jjbb1.vercel.app", // ✅ Admin
+  "https://forever-jjbb-jfdmpkwda-jaybies-projects.vercel.app", // ⛔ Temporary preview URL (must be added)
+].filter(Boolean);
 
-console.log("ENV Variables:", {
-  MONGODB_URI: process.env.MONGODB_URI ? "exists" : "MISSING",
-  PORT: process.env.PORT,
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      // ✅ Allow requests with no origin (Postman, SSR, mobile apps, etc.)
+      console.log("✅ Allowed CORS for:", origin || "NO ORIGIN");
+      return callback(null, true);
+    }
+
+    console.log("❌ Blocked CORS for:", origin);
+    return callback(new Error(`Origin '${origin}' not allowed by CORS`));
+  },
+
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+};
+
+app.use((req, res, next) => {
+  console.log("🛰️ Request received");
+  console.log(
+    "🔍 Request origin:",
+    req.headers.origin || "❌ No origin header"
+  );
+  console.log("🔗 Request URL:", req.originalUrl);
+  next();
 });
 
-await connectDB();
-
-app.use(express.json());
+// Middleware setup
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Preflight handling
+app.use(express.json());
+
+// Database connections
+connectCloudinary();
+await connectDB();
 
 // Routes
 app.use("/api/user", userRouter);
@@ -52,8 +68,25 @@ app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 
+// Health check endpoint
 app.get("/", (req, res) => {
-  res.send("API Working");
+  res.json({
+    status: "API Working",
+    timestamp: new Date().toISOString(),
+  });
 });
 
-app.listen(port, () => console.log(`🚀 Server started on PORT: ${port}`));
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("⚠️ Server error:", err);
+  res.status(500).json({
+    error: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`🚀 Server started on PORT: ${port}`);
+  console.log("Allowed Origins:", allowedOrigins);
+});

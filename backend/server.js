@@ -28,17 +28,18 @@ const corsOptions = {
   origin: function (origin, callback) {
     console.log("🔍 Incoming CORS request from:", origin || "NO ORIGIN");
 
-    if (
+    const isAllowed =
       !origin ||
       allowedOrigins.includes(origin) ||
-      /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/.test(origin)
-    ) {
+      /^https:\/\/.*\.vercel\.app$/.test(origin); // ✅ allow all Vercel subdomains
+
+    if (isAllowed) {
       console.log("✅ Allowed CORS for:", origin || "NO ORIGIN");
       return callback(null, true);
     }
 
     console.log("❌ Blocked by CORS:", origin);
-    return callback(new Error(`Origin '${origin}' not allowed by CORS`));
+    callback(new Error(`Origin '${origin}' not allowed by CORS`));
   },
   credentials: true,
   optionsSuccessStatus: 200,

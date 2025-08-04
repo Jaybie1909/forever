@@ -22,25 +22,24 @@ const allowedOrigins = [
   "http://localhost:5174",
   "https://forever-jjbb.vercel.app", // ✅ Main
   "https://forever-jjbb1.vercel.app", // ✅ Admin
-  "https://forever-jjbb-jfdmpkwda-jaybies-projects.vercel.app", // ⛔ Temporary preview URL (must be added)
 ].filter(Boolean);
 
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log("🔍 Incoming CORS request from:", origin || "NO ORIGIN");
+
     if (
       !origin ||
       allowedOrigins.includes(origin) ||
-      /^https:\/\/.*\.vercel\.app$/.test(origin)
+      /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/.test(origin)
     ) {
-      // ✅ Allow requests with no origin (Postman, SSR, mobile apps, etc.)
       console.log("✅ Allowed CORS for:", origin || "NO ORIGIN");
       return callback(null, true);
     }
 
-    console.log("❌ Blocked CORS for:", origin);
+    console.log("❌ Blocked by CORS:", origin);
     return callback(new Error(`Origin '${origin}' not allowed by CORS`));
   },
-
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

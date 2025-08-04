@@ -27,7 +27,11 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/.*\.vercel\.app$/.test(origin)
+    ) {
       // ✅ Allow requests with no origin (Postman, SSR, mobile apps, etc.)
       console.log("✅ Allowed CORS for:", origin || "NO ORIGIN");
       return callback(null, true);
